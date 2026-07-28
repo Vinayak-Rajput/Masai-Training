@@ -2,7 +2,7 @@ package com.main.assignments;
 
 import java.util.Scanner;
 
-public class FinbonacciUptoN {
+public class FibonacciUptoN {
     static void main() {
         Scanner sc = new Scanner(System.in);
 
