@@ -1,25 +1,34 @@
 package com.main.assignments;
 
 import java.util.Scanner;
+import java.util.HashMap;
 
-public class Assignment2 {
+public class Assignment2Way2 {
     static void main() {
         Scanner sc =new Scanner(System.in);
 
         System.out.println("Enter Marks: ");
         int marks = sc.nextInt();
 
+        HashMap<Integer,Integer> hMap=new HashMap<>();
+        for(int i=0;i<=100;i++){
+            if(i>=90)hMap.put(i,1);
+            else if(i>=75)hMap.put(i,2);
+            else if(i>=60)hMap.put(i,3);
+            else hMap.put(i,4);
+        }
+
         System.out.println("Your Grade: ");
-        switch(marks){
-            case 100,99,98,97,96,95,94,93,92,91,90: {
+        switch(hMap.get(marks)){
+            case 1: {
                 System.out.println("A");
                 break;
             }
-            case 89,88,87,86,85,84,83,82,81,80,79,78,77,76,75: {
+            case 2: {
                 System.out.println("B");
                 break;
             }
-            case 74,73,72,71,70,69,68,67,66,65,64,63,62,61,60: {
+            case 3: {
                 System.out.println("C");
                 break;
             }
