@@ -1,6 +1,4 @@
-package com.main.assignments;
-
-import java.sql.SQLOutput;
+package com.hdfc.day2;
 
 public class Assignment9 {
     static void main() {

@@ -1,8 +1,8 @@
-package com.main.assignments;
+package com.hdfc.day2;
 
 import java.util.Scanner;
 
-public class FibonacciNTerms{
+public class FibonacciUptoN {
     static void main() {
         Scanner sc = new Scanner(System.in);
 
@@ -21,9 +21,10 @@ public class FibonacciNTerms{
         }
 
         System.out.print("0 1 ");
-        for(int i=2;i<num;i++){
+        for(int i=2;;i++){
 
             int cur = first + second;
+            if(cur>num) break;
             System.out.print(cur+" ");
             first = second;
             second = cur;
