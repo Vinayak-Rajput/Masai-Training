@@ -32,3 +32,77 @@ Implement:
 
 ModernFurnitureFactory
 ClassicFurnitureFactorys
+
+
+public interface Button {
+    void paint();
+}
+
+public interface CheckBox {
+    void check();
+}
+
+public class WindowsButton implements Button {
+    @Override
+    public void paint() {
+        System.out.println("Windows Button");
+    }
+}
+
+public class WindowsCheckBox implements CheckBox {
+    @Override
+    public void check() {
+        System.out.println("Windows Checkbox");
+    }
+}
+
+public class MacButton implements Button {
+    @Override
+    public void paint() {
+        System.out.println("Mac Button");
+    }
+}
+
+public class MacCheckBox implements CheckBox {
+    @Override
+    public void check() {
+        System.out.println("Mac Checkbox");
+    }
+}
+
+public interface GUIFactory {
+    Button createButton();
+    CheckBox createCheckBox();
+}
+
+public class WindowsFactory implements GUIFactory {
+    @Override
+    public Button createButton() {
+        return new WindowsButton();
+    }
+    @Override
+    public CheckBox createCheckBox() {
+        return new WindowsCheckBox();
+    }
+}
+
+public class MacFactory implements GUIFactory {
+    @Override
+    public Button createButton() {
+        return new MacButton();
+    }
+    @Override
+    public CheckBox createCheckBox() {
+        return new MacCheckBox();
+    }
+}
+
+public class Client {
+    public static void main(String[] args) {
+        GUIFactory factory = new WindowsFactory();
+        Button button = factory.createButton();
+        CheckBox checkBox = factory.createCheckBox();
+        button.paint();
+        checkBox.check();
+    }
+}

@@ -11,4 +11,29 @@ Saving Logic
 Sending Mails
 Generating Reports
 
-2.
+2. Feature Envy - Class OrderService has more logic pertaining to the data belonging to other classes (Order & Item) than its own.
+
+i.e. tasks like calculating total, discounts and validating order acts on data provided on other classes like Order and Employee,
+therefore logic related to them can easily be transferred to those classes
+
+3. God Class - Even if we break processOrder() into multiple methods in OrderService class, it is a potential Goid Class with more
+than single responsibilty as it will have methods with too much diverse range
+
+4. Tight Coupling - OrderService is highly dependent on both Order and Item classes, any changes in implementation of those can break
+OrderService class
+
+more...
+
+-> Just throwing the runtime exception in case of order list being empty is not good code practice as it ends program abruptly
+-> Item can easily be an interface with Laptop, other items like Laptop implementing it to have an proper loose coupling architecture
+with well defined objects here only name of an item is representing the object/ item which is not an good practice as we have to
+change implementation in other classes if that changes
+
+
+
+SOLID Properties violated:
+
+1 SRP - Violated through long method (processOrder()), thus a single class (OrderService) having multiple responsibilities
+2 OCP - Again logic for other customer types isn't written and there is no way we can add implementation of those without modifying ecisting code
+3 & 4 LSP and ISP -> No parent - child relationship exist & No Interface exist
+5 DIP - OrderService is dependent based on both Order and Item; Demo is creating instance of OrderService directly
