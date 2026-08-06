@@ -1,0 +1,14 @@
+Code smells present:
+1. Long Method - processOrder() inside OrderService.java
+
+Single Method handles following tasks:
+
+Validation of Order
+Calculating total order cost
+Calculating Discount
+Database Connection
+Saving Logic
+Sending Mails
+Generating Reports
+
+2.

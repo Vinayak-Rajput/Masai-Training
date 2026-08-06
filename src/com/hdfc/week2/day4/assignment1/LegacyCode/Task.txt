@@ -1,0 +1,21 @@
+Legacy Order Processing Refactoring Exercise:
+=============================================
+
+Objective:
+
+--You have inherited a legacy Order Processing system. The code works, but it violates several SOLID principles and contains multiple code smells.
+
+Your task is to:
+
+--Identify the code smells.
+--Identify the violated SOLID principles.
+--Refactor the design.
+--Explain why your solution is better.
+
+Questions:
+
+Q1. Which SOLID principle(s) are violated?
+Q2. Identify at least four code smells present in the code.
+Q3. How would you refactor this design?
+Q4. Which responsibilities can be moved into separate classes?
+Q5. How will your design make future changes easier?
