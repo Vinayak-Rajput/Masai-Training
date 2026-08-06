@@ -1,4 +1,4 @@
-package com.main.assignments;
+package com.hdfc.day2;
 
 import java.util.Scanner;
 import java.util.HashMap;

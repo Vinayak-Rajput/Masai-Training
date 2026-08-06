@@ -1,4 +1,4 @@
-package com.main.assignments;
+package com.hdfc.day2;
 
 public class Print10To1 {
     static void main() {
