@@ -1,4 +1,4 @@
-Repository created to manage the assignments and practice done during training sessions porganised by Masai
+Repository created to manage the assignments and practice done during training sessions organised by Masai
 
 Project Structure
 -> Week(n) -> Day(n) -> Assignment(n)
