@@ -1,3 +1,10 @@
+SOLID Properties violated:
+
+1 SRP - Violated through long method (processOrder()), thus a single class (OrderService) having multiple responsibilities
+2 OCP - Again logic for other customer types isn't written and there is no way we can add implementation of those without modifying ecisting code
+3 & 4 LSP and ISP -> No parent - child relationship exist & No Interface exist
+5 DIP - OrderService is dependent based on both Order and Item; Demo is creating instance of OrderService directly
+
 Code smells present:
 1. Long Method - processOrder() inside OrderService.java
 
@@ -29,11 +36,24 @@ more...
 with well defined objects here only name of an item is representing the object/ item which is not an good practice as we have to
 change implementation in other classes if that changes
 
+Refactoring involves
+
+1. Create classes with proper responsibilities
+2. Introducing a better package structure
+3. Write proper logic for operations
+4. Create validation rules for data provided for processing
+5. Checking whether user is valid or not before using the service
+6. Removing any long functions
+7. Create functions where they belong
+
+Responsibilities that can be made separate:
+
+Tasks involved in OrderService can be handled by separate classes for Database handling, EmailService and ReportGenerating service etc
 
 
-SOLID Properties violated:
+Design will help as in:
 
-1 SRP - Violated through long method (processOrder()), thus a single class (OrderService) having multiple responsibilities
-2 OCP - Again logic for other customer types isn't written and there is no way we can add implementation of those without modifying ecisting code
-3 & 4 LSP and ISP -> No parent - child relationship exist & No Interface exist
-5 DIP - OrderService is dependent based on both Order and Item; Demo is creating instance of OrderService directly
+Its easier to read and therefore debug
+Flow of application is more understandable
+Brings modularity to code structure
+
