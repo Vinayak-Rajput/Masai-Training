@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>GenAI Foundations &amp; Prompt Engineering for Developers</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root{
+            --paper:#F6F7F9;
+            --card:#FFFFFF;
+            --ink:#12161D;
+            --ink-2:#495264;
+            --ink-3:#7C879B;
+            --rule:#DDE2EA;
+            --signal:#3B34C4;
+            --signal-soft:#ECEBFB;
+            --good:#0E7462;
+            --good-soft:#E3F3F0;
+            --warn:#A9530A;
+            --warn-soft:#FBEFE2;
+            --bad:#B02A37;
+            --bad-soft:#FBE9EB;
+            --shadow:0 1px 2px rgba(18,22,29,.05), 0 8px 24px -14px rgba(18,22,29,.22);
+        }
+        *{box-sizing:border-box}
+        html{scroll-behavior:smooth;scroll-padding-top:84px}
+        body{
+            margin:0;background:var(--paper);color:var(--ink);
+            font-family:"IBM Plex Sans",system-ui,sans-serif;
+            font-size:16.5px;line-height:1.62;
+            -webkit-font-smoothing:antialiased;
+        }
+        h1,h2,h3,h4{font-family:"Space Grotesk",system-ui,sans-serif;line-height:1.15;margin:0}
+        code,kbd,pre,.mono{font-family:"IBM Plex Mono",ui-monospace,monospace}
+
+        /* ---------- top bar ---------- */
+        .topbar{
+            position:sticky;top:0;z-index:50;background:rgba(246,247,249,.88);
+            backdrop-filter:blur(10px);border-bottom:1px solid var(--rule);
+        }
+        .topbar-in{max-width:1180px;margin:0 auto;padding:12px 24px;display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+        .brand{font-family:"Space Grotesk";font-weight:700;font-size:15px;letter-spacing:-.01em;white-space:nowrap}
+        .brand span{color:var(--signal)}
+        .tocbar{display:flex;gap:4px;overflow-x:auto;flex:1;scrollbar-width:none}
+        .tocbar::-webkit-scrollbar{display:none}
+        .tocbar a{
+            font-size:12.5px;font-weight:500;color:var(--ink-2);text-decoration:none;
+            padding:5px 10px;border-radius:999px;white-space:nowrap;
+        }
+        .tocbar a:hover{background:var(--signal-soft);color:var(--signal)}
+        .tocbar a.on{background:var(--ink);color:#fff}
+
+        /* ---------- layout ---------- */
+        .wrap{max-width:1180px;margin:0 auto;padding:0 24px 120px}
+        section{padding:76px 0 8px;border-top:1px solid var(--rule)}
+        section:first-of-type{border-top:none}
+        .eyebrow{
+            font-family:"IBM Plex Mono";font-size:11.5px;font-weight:600;letter-spacing:.14em;
+            text-transform:uppercase;color:var(--signal);margin-bottom:14px;display:flex;gap:10px;align-items:center;
+        }
+        .eyebrow::after{content:"";height:1px;flex:1;background:var(--rule)}
+        h2{font-size:clamp(28px,3.6vw,40px);font-weight:600;letter-spacing:-.025em;margin-bottom:14px}
+        h3{font-size:20px;font-weight:600;letter-spacing:-.01em;margin:34px 0 10px}
+        h4{font-size:15.5px;font-weight:600;margin:0 0 6px}
+        p{margin:0 0 14px;max-width:74ch;color:var(--ink-2)}
+        p strong,li strong{color:var(--ink);font-weight:600}
+        ul,ol{max-width:74ch;color:var(--ink-2);padding-left:22px;margin:0 0 16px}
+        li{margin-bottom:7px}
+        .lead{font-size:18.5px;color:var(--ink);max-width:70ch}
+
+        /* ---------- hero ---------- */
+        .hero{padding:64px 0 12px;border:none}
+        .hero h1{font-size:clamp(34px,5.4vw,60px);font-weight:700;letter-spacing:-.035em;max-width:19ch}
+        .hero .sub{font-size:19px;color:var(--ink-2);max-width:64ch;margin-top:18px}
+        .meta{display:flex;gap:10px;flex-wrap:wrap;margin:26px 0 34px}
+        .pill{
+            font-family:"IBM Plex Mono";font-size:12px;font-weight:500;padding:6px 12px;
+            border:1px solid var(--rule);border-radius:999px;background:var(--card);color:var(--ink-2);
+        }
+
+        /* ---------- signature: token strip ---------- */
+        .tokenstrip{
+            background:var(--card);border:1px solid var(--rule);border-radius:14px;
+            padding:22px;box-shadow:var(--shadow);margin:8px 0 6px;
+        }
+        .tokenstrip .cap{font-family:"IBM Plex Mono";font-size:11.5px;color:var(--ink-3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px}
+        .toks{display:flex;flex-wrap:wrap;gap:3px;align-items:center}
+        .tok{
+            font-family:"IBM Plex Mono";font-size:14.5px;padding:5px 7px;border-radius:5px;
+            background:var(--signal-soft);color:var(--ink);border:1px solid #DAD8F6;
+        }
+        .tok.alt{background:#EAF6F3;border-color:#CFE8E1}
+        .tok.next{background:var(--ink);color:#fff;border-color:var(--ink)}
+        .tok.ghost{background:transparent;border:1px dashed var(--rule);color:var(--ink-3)}
+
+        /* ---------- cards ---------- */
+        .grid{display:grid;gap:16px;margin:20px 0}
+        .g2{grid-template-columns:repeat(2,1fr)}
+        .g3{grid-template-columns:repeat(3,1fr)}
+        .g4{grid-template-columns:repeat(4,1fr)}
+        .card{
+            background:var(--card);border:1px solid var(--rule);border-radius:12px;
+            padding:18px 20px;box-shadow:var(--shadow);
+        }
+        .card p:last-child,.card ul:last-child{margin-bottom:0}
+        .card .tag{
+            font-family:"IBM Plex Mono";font-size:10.5px;font-weight:600;letter-spacing:.1em;
+            text-transform:uppercase;color:var(--ink-3);display:block;margin-bottom:8px;
+        }
+        .num{
+            font-family:"Space Grotesk";font-size:13px;font-weight:700;color:var(--signal);
+            display:block;margin-bottom:6px;
+        }
+
+        /* ---------- prompt blocks ---------- */
+        .prompt{
+            border:1px solid var(--rule);border-radius:12px;background:var(--card);
+            overflow:hidden;margin:14px 0;box-shadow:var(--shadow);
+        }
+        .prompt-head{
+            display:flex;gap:10px;align-items:center;padding:10px 16px;
+            border-bottom:1px solid var(--rule);background:#FBFCFD;
+        }
+        .prompt-head .label{font-family:"IBM Plex Mono";font-size:11.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase}
+        .prompt-body{padding:16px;font-family:"IBM Plex Mono";font-size:13.5px;line-height:1.7;white-space:pre-wrap;color:var(--ink)}
+        .prompt.bad .prompt-head{background:var(--bad-soft);border-bottom-color:#F1D2D6}
+        .prompt.bad .prompt-head .label{color:var(--bad)}
+        .prompt.good .prompt-head{background:var(--good-soft);border-bottom-color:#CBE6DF}
+        .prompt.good .prompt-head .label{color:var(--good)}
+        .prompt.plain .prompt-head .label{color:var(--ink-2)}
+        .outcome{
+            padding:12px 16px;border-top:1px dashed var(--rule);background:#FBFCFD;
+            font-size:14.5px;color:var(--ink-2);
+        }
+        .outcome b{color:var(--ink)}
+
+        /* ---------- table ---------- */
+        .tablewrap{overflow-x:auto;margin:20px 0;border:1px solid var(--rule);border-radius:12px;background:var(--card);box-shadow:var(--shadow)}
+        table{border-collapse:collapse;width:100%;font-size:15px;min-width:620px}
+        th,td{text-align:left;padding:12px 16px;border-bottom:1px solid var(--rule);vertical-align:top}
+        th{font-family:"Space Grotesk";font-size:12.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);background:#FBFCFD}
+        tr:last-child td{border-bottom:none}
+        td:first-child{font-weight:500;color:var(--ink)}
+        .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:8px;vertical-align:middle}
+        .dot.g{background:var(--good)}.dot.w{background:var(--warn)}.dot.b{background:var(--bad)}
+
+        /* ---------- callout ---------- */
+        .callout{
+            border-left:3px solid var(--signal);background:var(--signal-soft);
+            padding:16px 20px;border-radius:0 10px 10px 0;margin:22px 0;
+        }
+        .callout p{color:var(--ink);margin:0;max-width:78ch}
+        .callout.warn{border-left-color:var(--warn);background:var(--warn-soft)}
+        .callout.stop{border-left-color:var(--bad);background:var(--bad-soft)}
+
+        /* ---------- reveal ---------- */
+        details.reveal{
+            border:1px solid var(--rule);border-radius:10px;background:var(--card);
+            margin:10px 0;overflow:hidden;box-shadow:var(--shadow);
+        }
+        details.reveal summary{
+            cursor:pointer;padding:14px 18px;font-family:"IBM Plex Mono";font-size:13.5px;
+            color:var(--ink);list-style:none;display:flex;gap:12px;align-items:flex-start;
+        }
+        details.reveal summary::-webkit-details-marker{display:none}
+        details.reveal summary::before{
+            content:"+";font-weight:600;color:var(--signal);font-size:16px;line-height:1.4;flex-shrink:0;
+        }
+        details.reveal[open] summary::before{content:"–"}
+        details.reveal[open] summary{border-bottom:1px solid var(--rule);background:#FBFCFD}
+        details.reveal .ans{padding:14px 18px 16px 44px;font-size:15px;color:var(--ink-2)}
+        details.reveal .ans strong{color:var(--ink)}
+
+        /* ---------- run sheet ---------- */
+        .run{border:1px solid var(--rule);border-radius:12px;overflow:hidden;background:var(--card);box-shadow:var(--shadow);margin:20px 0}
+        .run-row{display:grid;grid-template-columns:88px 1fr;gap:0;border-bottom:1px solid var(--rule)}
+        .run-row:last-child{border-bottom:none}
+        .run-row .t{
+            font-family:"IBM Plex Mono";font-size:13px;font-weight:600;color:var(--signal);
+            padding:13px 16px;background:#FBFCFD;border-right:1px solid var(--rule);
+        }
+        .run-row .d{padding:13px 18px;font-size:15px}
+        .run-row .d b{font-weight:600}
+        .run-break .t{color:var(--ink-3)}
+        .run-break .d{color:var(--ink-3);font-style:italic}
+
+        /* ---------- misc ---------- */
+        .kbdlist{list-style:none;padding:0;max-width:74ch}
+        .kbdlist li{
+            padding:12px 0;border-bottom:1px solid var(--rule);display:flex;gap:14px;align-items:baseline;
+        }
+        .kbdlist li:last-child{border-bottom:none}
+        .kbdlist .k{
+            font-family:"IBM Plex Mono";font-size:12px;font-weight:600;color:#fff;background:var(--ink);
+            padding:3px 9px;border-radius:5px;flex-shrink:0;
+        }
+        code.inl{background:#EEF0F4;padding:2px 6px;border-radius:4px;font-size:13.5px;color:var(--ink)}
+        .footer{margin-top:70px;padding-top:26px;border-top:1px solid var(--rule);color:var(--ink-3);font-size:14px}
+
+        @media (max-width:900px){
+            .g4{grid-template-columns:repeat(2,1fr)}
+            .g3{grid-template-columns:1fr}
+            .g2{grid-template-columns:1fr}
+        }
+        @media (max-width:600px){
+            body{font-size:16px}
+            .g4{grid-template-columns:1fr}
+            .wrap{padding:0 16px 80px}
+            .run-row{grid-template-columns:70px 1fr}
+        }
+        @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+        :focus-visible{outline:2px solid var(--signal);outline-offset:3px;border-radius:4px}
+        @media print{
+            .topbar{display:none}
+            details.reveal[open] .ans,details.reveal .ans{display:block}
+            section{page-break-inside:avoid}
+        }
+    </style>
+</head>
+<body>
+
+<div class="topbar">
+    <div class="topbar-in">
+        <div class="brand">AI Session <span>01</span></div>
+        <nav class="tocbar" id="toc">
+            <a href="#agenda">Agenda</a>
+            <a href="#howitworks">How it works</a>
+            <a href="#hallucination">Hallucination</a>
+            <a href="#reliable">Reliable vs risky</a>
+            <a href="#anatomy">Prompt anatomy</a>
+            <a href="#ladder">Refinement</a>
+            <a href="#fewshot">Few-shot</a>
+            <a href="#cot">Chain of thought</a>
+            <a href="#patterns">Dev patterns</a>
+            <a href="#context">Context</a>
+            <a href="#antipatterns">Anti-patterns</a>
+            <a href="#worksheet">Worksheet</a>
+            <a href="#close">Non-negotiables</a>
+        </nav>
+    </div>
+</div>
+
+<div class="wrap">
+
+    <!-- ===================== HERO ===================== -->
+    <section class="hero" id="top">
+        <h1>GenAI Foundations &amp; Prompt Engineering for Developers</h1>
+        <p class="sub">A working model of what a language model actually does, and the prompting technique that follows from it. Everything here is aimed at one outcome: getting code you would be willing to put your name on.</p>
+        <div class="meta">
+            <span class="pill">Session 1 of 2</span>
+            <span class="pill">2 hours + 2 hours</span>
+            <span class="pill">MERN + Java cohorts</span>
+            <span class="pill">Tools: any chat LLM</span>
+        </div>
+
+        <div class="tokenstrip">
+            <div class="cap">A model does exactly one thing, over and over</div>
+            <div class="toks">
+                <span class="tok">The</span><span class="tok">function</span><span class="tok">returns</span><span class="tok">an</span><span class="tok">empty</span><span class="tok next">array</span><span class="tok ghost">?</span><span class="tok ghost">?</span><span class="tok ghost">?</span>
+            </div>
+            <p style="margin:16px 0 0;font-size:15px">Given everything so far, predict the next piece. Append it. Repeat. Every capability and every failure in this session comes out of that single loop.</p>
+        </div>
+
+        <h3>By the end of the session</h3>
+        <ul>
+            <li>Explain in plain terms how an LLM produces output, and why it invents things that do not exist.</li>
+            <li>Separate tasks where AI is reliable from tasks where it is risky.</li>
+            <li>Structure a prompt with role, context, task and output format, and improve it by iterating.</li>
+            <li>Use few-shot examples and constraints to get consistent, usable code.</li>
+            <li>Supply the right context — error output, data shapes, surrounding code, conventions — for debugging and generation.</li>
+            <li>Take a failing prompt, rewrite it, and say precisely why the rewrite worked.</li>
+        </ul>
+    </section>
+
+    <!-- ===================== AGENDA ===================== -->
+    <section id="agenda">
+        <div class="eyebrow">Run sheet</div>
+        <h2>How the four hours are spent</h2>
+        <p>Two blocks of two hours. The first block builds the mental model and the prompt structure. The second applies it to real developer tasks and ends with a rewrite exercise.</p>
+
+        <h3>Block 1 — Foundations</h3>
+        <div class="run">
+            <div class="run-row"><div class="t">35 min</div><div class="d"><b>How an LLM generates output</b> — tokens, next-token prediction, context window, temperature</div></div>
+            <div class="run-row"><div class="t">20 min</div><div class="d"><b>Why models hallucinate</b> — live demonstrations of confident wrong answers</div></div>
+            <div class="run-row"><div class="t">20 min</div><div class="d"><b>Reliable vs risky</b> — building the task map</div></div>
+            <div class="run-row run-break"><div class="t">10 min</div><div class="d">Break</div></div>
+            <div class="run-row"><div class="t">35 min</div><div class="d"><b>Prompt anatomy</b> — role, context, task, output format</div></div>
+        </div>
+
+        <h3>Block 2 — Applied prompting</h3>
+        <div class="run">
+            <div class="run-row"><div class="t">30 min</div><div class="d"><b>The refinement ladder</b> — one task taken from useless to usable in six rounds</div></div>
+            <div class="run-row"><div class="t">25 min</div><div class="d"><b>Constraints and few-shot</b> — forcing a house style, in both JavaScript and Java</div></div>
+            <div class="run-row"><div class="t">10 min</div><div class="d"><b>Chain of thought</b> — where step-by-step reasoning earns its cost</div></div>
+            <div class="run-row run-break"><div class="t">10 min</div><div class="d">Break</div></div>
+            <div class="run-row"><div class="t">25 min</div><div class="d"><b>Developer patterns</b> — explain, scaffold, test, debug, refactor</div></div>
+            <div class="run-row"><div class="t">15 min</div><div class="d"><b>Anti-patterns</b> — six broken prompts and the flaw in each</div></div>
+            <div class="run-row"><div class="t">15 min</div><div class="d"><b>Rewrite worksheet</b> — the one hands-on piece</div></div>
+            <div class="run-row"><div class="t">10 min</div><div class="d"><b>Non-negotiables and what Session 2 covers</b></div></div>
+        </div>
+
+        <div class="callout">
+            <p>Most of this session is demonstrated live on screen rather than typed along with. Every prompt on this page is reproducible afterwards in any free chat tool — the value is in re-running them yourself once you have access.</p>
+        </div>
+    </section>
+
+    <!-- ===================== HOW IT WORKS ===================== -->
+    <section id="howitworks">
+        <div class="eyebrow">Part 1 · Mental model</div>
+        <h2>How an LLM generates output</h2>
+        <p class="lead">There is no database of answers inside the model, no lookup, no compiler, no execution. There is a single repeated prediction, and everything else is a consequence of it.</p>
+
+        <h3>Tokens: the unit the model actually sees</h3>
+        <p>Text is split into <strong>tokens</strong> before the model touches it. A token is roughly a word, a word fragment, or a piece of punctuation. Common words are one token. Rare words, identifiers and non-English text split into several.</p>
+
+        <div class="tokenstrip">
+            <div class="cap">The same sentence, as a human reads it and as a model receives it</div>
+            <div class="toks" style="margin-bottom:14px">
+                <span class="tok alt">useState</span><span class="tok alt"> returns</span><span class="tok alt"> an</span><span class="tok alt"> array</span><span class="tok alt"> of</span><span class="tok alt"> two</span><span class="tok alt"> values</span><span class="tok alt">.</span>
+            </div>
+            <div class="toks">
+                <span class="tok">use</span><span class="tok">State</span><span class="tok"> returns</span><span class="tok"> an</span><span class="tok"> array</span><span class="tok"> of</span><span class="tok"> two</span><span class="tok"> values</span><span class="tok">.</span>
+            </div>
+            <p style="margin:16px 0 0;font-size:15px"><code class="inl">useState</code> is not one thing to the model. It is two fragments that very often appear together.</p>
+        </div>
+
+        <p>Three consequences worth carrying with you:</p>
+        <ul>
+            <li><strong>Character-level tasks are unreliable.</strong> Counting letters, reversing strings by hand, or counting words are exactly the tasks the tokenisation hides from the model.</li>
+            <li><strong>Token count is not word count.</strong> Code, JSON and long identifiers consume more tokens than prose of the same length.</li>
+            <li><strong>Tokens are the billing and limit unit.</strong> Everything you paste, and everything the model writes back, is counted.</li>
+        </ul>
+
+        <h3>Next-token prediction</h3>
+        <p>At each step the model produces a probability distribution over every possible next token, picks one, appends it, and runs again with the longer text. That is the whole generation loop.</p>
+        <p>The model is optimising for <strong>what plausibly comes next</strong>, given everything before it. It is not optimising for what is true, what compiles, or what exists. When the plausible thing and the true thing coincide — which is often — the output is excellent. When they diverge, the output is confidently wrong.</p>
+
+        <div class="callout">
+            <p>This single sentence explains most of what follows: <strong>the model is a plausibility engine, not a truth engine.</strong> Every prompting technique in this session is a way of making the true answer also the most plausible one.</p>
+        </div>
+
+        <h3>Context window</h3>
+        <p>The context window is the total amount of text — your instructions, the code you pasted, the conversation history, and the response being written — that the model can consider at once. It is finite.</p>
+        <ul>
+            <li><strong>Nothing outside the window exists.</strong> A file you did not paste is not "missing"; from the model's position it was never mentioned.</li>
+            <li><strong>Long conversations degrade.</strong> As a chat grows, early instructions compete with a large volume of later text. Constraints given twenty messages ago quietly stop being honoured.</li>
+            <li><strong>More context is not automatically better.</strong> Pasting an entire project buries the three relevant functions among hundreds of irrelevant ones. Precision beats volume.</li>
+            <li><strong>Fresh chat for a fresh task.</strong> A new problem in an old, cluttered conversation inherits all of that clutter.</li>
+        </ul>
+
+        <h3>Temperature</h3>
+        <p>Temperature controls how the next token is chosen from the probability distribution. Low temperature concentrates on the highest-probability tokens. High temperature flattens the distribution and allows less likely choices.</p>
+        <div class="grid g3">
+            <div class="card">
+                <span class="tag">Low · near 0</span>
+                <h4>Focused, repeatable</h4>
+                <p>The same prompt gives near-identical output. Correct default for code, refactoring, data transformation, anything with a right answer.</p>
+            </div>
+            <div class="card">
+                <span class="tag">Medium</span>
+                <h4>Balanced</h4>
+                <p>Normal conversation, explanation, documentation. Enough variation to phrase things well without wandering.</p>
+            </div>
+            <div class="card">
+                <span class="tag">High</span>
+                <h4>Varied, surprising</h4>
+                <p>Brainstorming names, generating varied test data, exploring alternative approaches. Not for code you intend to keep.</p>
+            </div>
+        </div>
+        <p>Chat interfaces usually do not expose this control, but the behaviour is still visible: ask the same question twice in two fresh chats and compare. <strong>Low temperature does not mean correct.</strong> It means consistent. A model can be consistently wrong.</p>
+    </section>
+
+    <!-- ===================== HALLUCINATION ===================== -->
+    <section id="hallucination">
+        <div class="eyebrow">Part 2 · Failure mode</div>
+        <h2>Why models hallucinate</h2>
+        <p class="lead">A hallucination is not a malfunction. It is the generation loop working exactly as designed, in a region where the plausible answer and the real answer are not the same thing.</p>
+
+        <p>When a model has seen thousands of examples of <code class="inl">array.someMethod()</code> patterns, a method name that <em>fits the pattern</em> is highly probable — whether or not that method exists. The model has no mechanism to check. It cannot run the code, open the docs, or fail to find something.</p>
+
+        <h3>The four shapes hallucination takes in code</h3>
+        <div class="grid g2">
+            <div class="card">
+                <span class="tag">Shape 1</span>
+                <h4>Invented APIs</h4>
+                <p>A method, hook or utility that does not exist, but sits perfectly inside the naming conventions of a real library. Frequently the most useful-sounding function in the answer.</p>
+            </div>
+            <div class="card">
+                <span class="tag">Shape 2</span>
+                <h4>Real API, wrong signature</h4>
+                <p>The function exists. The argument order, option names, or return shape are subtly wrong — often matching an older or newer version than yours.</p>
+            </div>
+            <div class="card">
+                <span class="tag">Shape 3</span>
+                <h4>Confident factual claims</h4>
+                <p>Complexity analysis, browser support, version behaviour, performance comparisons — stated in the same assured tone as everything else, with no signal of uncertainty.</p>
+            </div>
+            <div class="card">
+                <span class="tag">Shape 4</span>
+                <h4>Fabricated specifics about your code</h4>
+                <p>Referring to fields, props, files or functions you never showed it. The model fills the gap you left with something reasonable.</p>
+            </div>
+        </div>
+
+        <h3>Live demonstrations</h3>
+        <div class="prompt plain">
+            <div class="prompt-head"><span class="label">Demo A · character-level blindness</span></div>
+            <div class="prompt-body">How many times does the letter "r" appear in "refactoring"?</div>
+            <div class="outcome"><b>What to watch for:</b> the answer arrives instantly and confidently. The model never saw the individual characters — it saw two or three tokens.</div>
+        </div>
+
+        <div class="prompt plain">
+            <div class="prompt-head"><span class="label">Demo B · invented API</span></div>
+            <div class="prompt-body">Which built-in React hook should I use to debounce a value so my search input does not fire on every keystroke?</div>
+            <div class="outcome"><b>What to watch for:</b> pressure toward a built-in answer where none exists. A confident, well-named, non-existent hook is a common result.</div>
+        </div>
+
+        <div class="prompt plain">
+            <div class="prompt-head"><span class="label">Demo C · fabricated specifics</span></div>
+            <div class="prompt-body">Fix the bug in my ProductCard component where the price is not displaying.</div>
+            <div class="outcome"><b>What to watch for:</b> no component was provided, yet the answer names props and fields with total assurance. Everything after the first line is invention.</div>
+        </div>
+
+        <div class="prompt plain">
+            <div class="prompt-head"><span class="label">Demo D · confident wrong analysis</span></div>
+            <div class="prompt-body">What is the time complexity of the algorithm below? Answer in one line.
+
+                function mystery(arr) {
+                let out = [];
+                for (let i = 0; i &lt; arr.length; i++) {
+                if (out.includes(arr[i]) === false) out.push(arr[i]);
+                }
+                return out;
+                }</div>
+            <div class="outcome"><b>What to watch for:</b> the hidden cost of <code>includes</code> inside the loop makes this quadratic. A quick, plausible "O(n)" is a common answer, and it reads exactly as confidently as a correct one.</div>
+        </div>
+
+        <div class="callout warn">
+            <p><strong>The tell is that there is no tell.</strong> A hallucinated answer is written with the same fluency, structure and confidence as a correct one. Tone carries no information about accuracy. The only defence is verification.</p>
+        </div>
+
+        <h3>What reduces it</h3>
+        <ul>
+            <li><strong>Supply the ground truth.</strong> Paste the actual code, the actual error, the actual data shape. The model cannot invent what you have already specified.</li>
+            <li><strong>Name versions explicitly.</strong> "React 18", "Java 17", "Express 4" removes an entire class of version-mismatch errors.</li>
+            <li><strong>Give permission to not know.</strong> Asking it to say when it is unsure, or to flag which parts need verification, changes what it produces.</li>
+            <li><strong>Ask for verifiable output.</strong> Something you can run, compile or check beats something you can only read and nod at.</li>
+            <li><strong>Prefer familiar territory.</strong> Widely used, stable libraries produce far fewer inventions than niche or fast-moving ones.</li>
+        </ul>
+    </section>
+
+    <!-- ===================== RELIABLE VS RISKY ===================== -->
+    <section id="reliable">
+        <div class="eyebrow">Part 3 · Judgement</div>
+        <h2>Where AI is reliable, and where it is risky</h2>
+        <p class="lead">The useful question is never "is AI good at coding". It is "can I cheaply verify this particular output, and what happens if it is wrong".</p>
+
+        <h3>Two axes decide it</h3>
+        <div class="grid g2">
+            <div class="card">
+                <span class="tag">Axis 1</span>
+                <h4>Verification cost</h4>
+                <p>How long does it take you to know the output is correct? Running a function takes seconds. Confirming an authorisation rule is watertight takes real effort. Low verification cost makes AI safe even when it is often wrong.</p>
+            </div>
+            <div class="card">
+                <span class="tag">Axis 2</span>
+                <h4>Cost of being wrong</h4>
+                <p>A malformed test file wastes a minute. A subtly wrong interest calculation or an access-control gap can reach production and cause real damage. High blast radius demands human authorship.</p>
+            </div>
+        </div>
+
+        <div class="tablewrap">
+            <table>
+                <thead><tr><th>Task</th><th>Verdict</th><th>Why</th></tr></thead>
+                <tbody>
+                <tr><td>Explaining unfamiliar code</td><td><span class="dot g"></span>Reliable</td><td>You still read the code afterwards; errors surface immediately.</td></tr>
+                <tr><td>Boilerplate and scaffolding</td><td><span class="dot g"></span>Reliable</td><td>Highly patterned, and it either runs or it does not.</td></tr>
+                <tr><td>Syntax translation between languages</td><td><span class="dot g"></span>Reliable</td><td>Structure is preserved; mistakes are visible on reading.</td></tr>
+                <tr><td>Regex and string transformations</td><td><span class="dot g"></span>Reliable</td><td>Instantly testable against your own examples.</td></tr>
+                <tr><td>Decoding an error message or stack trace</td><td><span class="dot g"></span>Reliable</td><td>You have the ground truth in hand and can confirm the fix.</td></tr>
+                <tr><td>Test scaffolding and edge-case suggestions</td><td><span class="dot g"></span>Reliable</td><td>Tests are self-checking; a wrong test fails loudly.</td></tr>
+                <tr><td>Naming, docs, commit messages</td><td><span class="dot g"></span>Reliable</td><td>You are the judge, and the cost of a bad suggestion is zero.</td></tr>
+                <tr><td>Exact API signatures and options</td><td><span class="dot w"></span>Verify</td><td>Classic invention territory. Confirm against real documentation.</td></tr>
+                <tr><td>Version-specific behaviour</td><td><span class="dot w"></span>Verify</td><td>Training data blends versions. Always state yours.</td></tr>
+                <tr><td>Performance and complexity claims</td><td><span class="dot w"></span>Verify</td><td>Plausible reasoning, unverified conclusions. Measure instead.</td></tr>
+                <tr><td>Large multi-file refactors</td><td><span class="dot w"></span>Verify</td><td>Too much changes at once to review honestly. Break it up.</td></tr>
+                <tr><td>Authentication and authorisation logic</td><td><span class="dot b"></span>Risky</td><td>Failures are silent, and the blast radius is the whole system.</td></tr>
+                <tr><td>Business rules unique to your product</td><td><span class="dot b"></span>Risky</td><td>The model has never seen your rules. It will produce a generic guess.</td></tr>
+                <tr><td>Financial or regulatory calculations</td><td><span class="dot b"></span>Risky</td><td>Wrong answers look right and carry real consequences.</td></tr>
+                <tr><td>Anything involving real credentials or customer data</td><td><span class="dot b"></span>Risky</td><td>Never paste it. Covered under non-negotiables.</td></tr>
+                <tr><td>Learning a fundamental you will be assessed on</td><td><span class="dot b"></span>Risky</td><td>The output is correct and you still cannot do it. The cost arrives later.</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="callout">
+            <p>A useful reframing: AI raises your ceiling, never your floor. It makes a strong engineer faster at things they could already check. It does not make an engineer who cannot review the output safer — it makes them faster at shipping things nobody has reviewed.</p>
+        </div>
+    </section>
+
+    <!-- ===================== ANATOMY ===================== -->
+    <section id="anatomy">
+        <div class="eyebrow">Part 4 · Structure</div>
+        <h2>The anatomy of a working prompt</h2>
+        <p class="lead">Four components. Not every prompt needs all four, but when output is disappointing, the cause is almost always a missing one.</p>
+
+        <div class="grid g4">
+            <div class="card">
+                <span class="num">01</span>
+                <h4>Role</h4>
+                <p>Who the model should answer as. Sets vocabulary, depth and assumptions.</p>
+                <p style="font-size:14px;color:var(--ink-3);margin-top:8px">"You are a senior React developer reviewing code from a junior teammate."</p>
+            </div>
+            <div class="card">
+                <span class="num">02</span>
+                <h4>Context</h4>
+                <p>Everything the model cannot see: the code, the error, the data shape, the versions, the conventions, what you already tried.</p>
+                <p style="font-size:14px;color:var(--ink-3);margin-top:8px">The component that breaks, and the exact console output.</p>
+            </div>
+            <div class="card">
+                <span class="num">03</span>
+                <h4>Task</h4>
+                <p>One specific thing to do, stated as an action. Not a topic, not a wish.</p>
+                <p style="font-size:14px;color:var(--ink-3);margin-top:8px">"Identify why the list re-renders on every keystroke and fix it."</p>
+            </div>
+            <div class="card">
+                <span class="num">04</span>
+                <h4>Output format</h4>
+                <p>The exact shape you want back. Removes the guesswork about how much, in what form, with what around it.</p>
+                <p style="font-size:14px;color:var(--ink-3);margin-top:8px">"One code block, no explanation before or after, comments only where the logic is non-obvious."</p>
+            </div>
+        </div>
+
+        <h3>Same task, with and without the structure</h3>
+
+        <div class="prompt bad">
+            <div class="prompt-head"><span class="label">Unstructured</span></div>
+            <div class="prompt-body">write a search bar in react</div>
+            <div class="outcome"><b>What comes back:</b> a generic component with an invented data source, arbitrary styling, a state pattern you may not use, and three paragraphs of explanation you did not ask for. Nothing about it fits your project.</div>
+        </div>
+
+        <div class="prompt good">
+            <div class="prompt-head"><span class="label">Structured</span></div>
+            <div class="prompt-body">You are a senior React developer writing code for a beginner-friendly codebase.
+
+                CONTEXT
+                - React 18, function components, plain CSS. No TypeScript, no Tailwind, no external libraries.
+                - State is managed with useState only. No useEffect in this component.
+                - The parent already holds the full list and passes it down.
+                - Props: items (array of { id, name, category, price }), onSelect (function).
+
+                TASK
+                Write a SearchableList component that renders the items and filters them
+                as the user types in a text input. Matching is case-insensitive on name only.
+
+                CONSTRAINTS
+                - Do not fetch data. Filter the items prop.
+                - Do not mutate the items prop.
+                - Show a message when nothing matches.
+                - Every list item must have a stable key.
+
+                OUTPUT FORMAT
+                One code block containing the complete component. No prose before or after.
+                Add a comment only where the logic is not obvious from the code.</div>
+            <div class="outcome"><b>What comes back:</b> code that drops into the project unmodified, uses only patterns already in use, and can be reviewed in under a minute because you already know what it should look like.</div>
+        </div>
+
+        <div class="callout">
+            <p>The structured version takes about ninety seconds to write. It replaces four rounds of "no, not like that" — and more importantly, it forces you to decide what you actually want before asking, which is where most of the value sits.</p>
+        </div>
+    </section>
+
+    <!-- ===================== LADDER ===================== -->
+    <section id="ladder">
+        <div class="eyebrow">Part 5 · Iteration</div>
+        <h2>The refinement ladder</h2>
+        <p class="lead">One task, six rounds. Each round adds a single element, and the change in output is attributable to that element alone.</p>
+        <p>The task: a component that shows a list of items with a search box and a sort control.</p>
+
+        <div class="prompt bad">
+            <div class="prompt-head"><span class="label">Round 1 · bare task</span></div>
+            <div class="prompt-body">make a list with search and sort</div>
+            <div class="outcome"><b>Result:</b> unusable. No language specified, no framework, no data. The model picks all of it for you, and it picks wrong.</div>
+        </div>
+
+        <div class="prompt plain">
+            <div class="prompt-head"><span class="label">Round 2 · + stack and versions</span></div>
+            <div class="prompt-body">Write a React 18 function component that renders a list of items
+                with a search box and a sort control. Plain CSS, no libraries.</div>
+            <div class="outcome"><b>Result:</b> runnable React, but with invented data hardcoded inside, and possibly hooks or patterns the codebase does not use. <b>Change:</b> the stack is now fixed.</div>
+        </div>
+
+        <div class="prompt plain">
+            <div class="prompt-head"><span class="label">Round 3 · + the real data shape</span></div>
+            <div class="prompt-body">... as above ...
+
+                The component receives this prop:
+
+                items: [
+                { id: 1, name: "Laptop Stand", category: "accessories", price: 1299 },
+                { id: 2, name: "Mechanical Keyboard", category: "input", price: 4599 }
+                ]
+
+                Search filters on name. Sort toggles between price ascending and descending.</div>
+            <div class="outcome"><b>Result:</b> the field names are now correct. This single addition eliminates the most common category of unusable output — code written against a data shape that does not exist. <b>Change:</b> no more invented fields.</div>
+        </div>
+
+        <div class="prompt plain">
+            <div class="prompt-head"><span class="label">Round 4 · + constraints</span></div>
+            <div class="prompt-body">... as above ...
+
+                CONSTRAINTS
+                - useState only. Do not use useEffect.
+                - Do not mutate the items prop when sorting.
+                - Do not fetch anything.
+                - Handle the empty-results case.
+                - Stable key on every list item.</div>
+            <div class="outcome"><b>Result:</b> the two bugs that would otherwise have appeared — an in-place <code>.sort()</code> mutating the prop, and an unnecessary effect — are now prevented rather than corrected later. <b>Change:</b> known failure modes closed off in advance.</div>
+        </div>
+
+        <div class="prompt plain">
+            <div class="prompt-head"><span class="label">Round 5 · + role and output format</span></div>
+            <div class="prompt-body">You are a senior React developer writing code for a beginner-friendly codebase.
+                Prefer clarity over cleverness.
+
+                ... context, task and constraints as above ...
+
+                OUTPUT FORMAT
+                One code block, complete component, no prose before or after.
+                Comments only where the logic is not obvious.</div>
+            <div class="outcome"><b>Result:</b> readable code at the right level, delivered in a form you can copy directly. <b>Change:</b> tone, complexity and packaging are now controlled.</div>
+        </div>
+
+        <div class="prompt good">
+            <div class="prompt-head"><span class="label">Round 6 · targeted follow-up</span></div>
+            <div class="prompt-body">Keep everything else identical. Two changes:
+
+                1. Search should also match category, not just name.
+                2. Pull the filter-and-sort logic into a helper function above the component
+                so it can be tested independently.
+
+                Return only the changed parts, not the whole file.</div>
+            <div class="outcome"><b>Result:</b> a small reviewable diff instead of a fresh rewrite. <b>Change:</b> iteration is now surgical, which means review stays honest.</div>
+        </div>
+
+        <h3>What the ladder teaches</h3>
+        <ul>
+            <li><strong>Change one thing per round.</strong> If you add context, constraints and a role simultaneously and the output improves, you have learned nothing about which mattered.</li>
+            <li><strong>"Keep everything else identical" is the highest-value phrase in iterative prompting.</strong> Without it, follow-ups silently rewrite parts you had already accepted.</li>
+            <li><strong>Ask for changed parts only.</strong> A full re-emission of the file makes it impossible to see what actually moved.</li>
+            <li><strong>Restart rather than repair.</strong> After three or four failed rounds, the conversation is polluted with rejected attempts. A fresh chat with everything you have learned folded into round one beats a fifth correction.</li>
+        </ul>
+
+        <h3>The same ladder in Java</h3>
+        <p>The technique is not language-specific. The identical progression applies to a backend task — and the components map one for one.</p>
+        <div class="prompt good">
+            <div class="prompt-head"><span class="label">Java equivalent, fully specified</span></div>
+            <div class="prompt-body">You are a senior Java developer writing code for a beginner-friendly codebase.
+
+                CONTEXT
+                - Java 17. No Lombok, no external libraries beyond the JDK.
+                - Existing record: record Item(int id, String name, String category, int price) {}
+                - Callers pass an unmodifiable List&lt;Item&gt;.
+
+                TASK
+                Write a utility class ItemFilter with one public static method that filters
+                items by a case-insensitive substring match on name or category, then sorts
+                by price. Sort direction is a parameter.
+
+                CONSTRAINTS
+                - Do not modify the input list.
+                - Return an empty list rather than null when nothing matches.
+                - Handle a null or blank search term by returning everything, sorted.
+
+                OUTPUT FORMAT
+                One code block. No prose. Javadoc on the public method only.</div>
+            <div class="outcome"><b>The point:</b> role, context, task, constraints, output format — same five parts, different stack. The structure is the transferable skill; the syntax is not.</div>
+        </div>
+    </section>
+
+    <!-- ===================== FEW SHOT ===================== -->
+    <section id="fewshot">
+        <div class="eyebrow">Part 6 · Consistency</div>
+        <h2>Constraints and few-shot examples</h2>
+        <p class="lead">Describing a style is unreliable. Demonstrating it is reliable. When output needs to match an existing convention, examples beat adjectives every time.</p>
+
+        <h3>Zero-shot vs few-shot</h3>
+        <div class="grid g2">
+            <div class="card">
+                <span class="tag">Zero-shot</span>
+                <h4>Instruction only</h4>
+                <p>You describe what you want. Correct default for most tasks — it is faster and the model is genuinely good at following clear instructions.</p>
+            </div>
+            <div class="card">
+                <span class="tag">Few-shot</span>
+                <h4>Instruction plus two or three worked examples</h4>
+                <p>You show what you want. Worth the extra tokens when the output must match a specific format, house style, or existing convention.</p>
+            </div>
+        </div>
+
+        <h3>Demonstration: enforcing a house style</h3>
+        <p>The goal is DSA solutions in a fixed format — a required header comment block, a specific function signature, and a complexity note in a set position.</p>
+
+        <div class="prompt bad">
+            <div class="prompt-head"><span class="label">Zero-shot · described style</span></div>
+            <div class="prompt-body">Write a function to check if a string is a palindrome.
+                Use our standard format with a header comment, clear naming,
+                and complexity analysis at the end.</div>
+            <div class="outcome"><b>Result:</b> some kind of header, some kind of complexity note, in some position. Ask three times and get three different layouts. "Our standard format" means nothing to a model that has never seen it.</div>
+        </div>
+
+        <div class="prompt good">
+            <div class="prompt-head"><span class="label">Few-shot · demonstrated style</span></div>
+            <div class="prompt-body">Write solutions in exactly this format. Two examples follow.
+
+                EXAMPLE 1
+                /**
+                * Problem: Two Sum
+                * Approach: Single-pass hash map storing complements.
+                */
+                function twoSum(nums, target) {
+                const seen = new Map();
+                for (let i = 0; i &lt; nums.length; i++) {
+                const need = target - nums[i];
+                if (seen.has(need)) return [seen.get(need), i];
+                seen.set(nums[i], i);
+                }
+                return [];
+                }
+                // Time: O(n) | Space: O(n)
+
+                EXAMPLE 2
+                /**
+                * Problem: Maximum Subarray
+                * Approach: Kadane's algorithm, running local and global maxima.
+                */
+                function maxSubArray(nums) {
+                let best = nums[0];
+                let current = nums[0];
+                for (let i = 1; i &lt; nums.length; i++) {
+                current = Math.max(nums[i], current + nums[i]);
+                best = Math.max(best, current);
+                }
+                return best;
+                }
+                // Time: O(n) | Space: O(1)
+
+                NOW SOLVE
+                Problem: Valid Palindrome — ignore non-alphanumeric characters and case.
+                Follow the format above exactly. No prose outside the code block.</div>
+            <div class="outcome"><b>Result:</b> the header block, the comment fields, the trailing complexity line and its exact separator all match. Run it five times and the shape is stable. <b>Two examples are usually enough; a third helps when the pattern has variation the first two do not show.</b></div>
+        </div>
+
+        <div class="callout">
+            <p>The practical version of this at work: when adding a file to an existing codebase, paste one similar existing file as the example. You are not asking for good code in the abstract — you are asking for code that looks like it belongs.</p>
+        </div>
+
+        <h3>Constraints that consistently earn their place</h3>
+        <ul>
+            <li><strong>Negative constraints.</strong> "Do not use external libraries." "Do not use TypeScript." "Do not add error handling I did not ask for." Naming what to avoid is often more effective than naming what to do.</li>
+            <li><strong>Scope limits.</strong> "Change only the function I pasted." "Do not restructure the file." Prevents unrequested rewrites.</li>
+            <li><strong>Length and shape.</strong> "Under 40 lines." "One code block." "No explanation."</li>
+            <li><strong>Level.</strong> "Written for someone three months into React." Controls how clever the solution gets.</li>
+            <li><strong>Uncertainty handling.</strong> "If a detail is missing, ask instead of assuming." Converts silent invention into a question you can answer.</li>
+        </ul>
+    </section>
+
+    <!-- ===================== COT ===================== -->
+    <section id="cot">
+        <div class="eyebrow">Part 7 · Reasoning</div>
+        <h2>Chain of thought</h2>
+        <p class="lead">Asking for reasoning before the answer changes the answer. It also costs time and tokens, so it belongs on some tasks and not others.</p>
+
+        <p>Because output is generated one token at a time with each token conditioned on the ones before it, text that works through the problem gives later tokens something better to condition on. Reasoning written first genuinely improves what comes after — it is not a formality.</p>
+
+        <div class="grid g2">
+            <div class="card">
+                <span class="tag">Worth it</span>
+                <h4>Multi-step and diagnostic work</h4>
+                <ul style="margin-bottom:0">
+                    <li>Debugging where the cause is not obvious</li>
+                    <li>Choosing between design approaches</li>
+                    <li>Tracing why a value ends up wrong</li>
+                    <li>Anything with several interacting conditions</li>
+                    <li>Complexity analysis, done properly</li>
+                </ul>
+            </div>
+            <div class="card">
+                <span class="tag">Not worth it</span>
+                <h4>Pattern work with a known shape</h4>
+                <ul style="margin-bottom:0">
+                    <li>Boilerplate and scaffolding</li>
+                    <li>Syntax conversion</li>
+                    <li>Renaming and formatting</li>
+                    <li>Simple, well-specified components</li>
+                    <li>Anything where you already know the answer's shape</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="prompt good">
+            <div class="prompt-head"><span class="label">Reasoning first, then the fix</span></div>
+            <div class="prompt-body">Before writing any code, work through this in order:
+
+                1. State what the code currently does, line by line, for the input given.
+                2. Identify the exact point where actual behaviour diverges from expected.
+                3. Explain the root cause in one or two sentences.
+                4. Only then, give the corrected code.
+
+                Do not skip to step 4.</div>
+            <div class="outcome"><b>Why the last line matters:</b> without it, the model frequently jumps straight to a plausible fix and the reasoning steps become a retroactive justification of a guess.</div>
+        </div>
+
+        <div class="callout warn">
+            <p>Reasoning that reads convincingly can still reach a wrong conclusion. Chain of thought improves the odds and makes the mistake <em>visible</em> — you can now see which step went wrong. It does not make the answer verified.</p>
+        </div>
+    </section>
+
+    <!-- ===================== DEV PATTERNS ===================== -->
+    <section id="patterns">
+        <div class="eyebrow">Part 8 · Application</div>
+        <h2>Developer prompting patterns</h2>
+        <p class="lead">Five recurring tasks, each with a prompt shape that reliably works.</p>
+
+        <h3>Pattern 1 — Explaining code</h3>
+        <div class="prompt good">
+            <div class="prompt-head"><span class="label">Explain</span></div>
+            <div class="prompt-body">Explain the code below to someone comfortable with JavaScript
+                but new to React.
+
+                Structure the explanation as:
+                1. What this component does, in two sentences.
+                2. What each hook and handler is responsible for.
+                3. The order things happen when the user types in the input.
+                4. Anything here that would surprise someone new to React.
+
+                Do not suggest improvements. I only want to understand it.
+
+                [paste code]</div>
+            <div class="outcome"><b>Why it works:</b> the audience level controls vocabulary, the numbered structure controls organisation, and the last line prevents the answer drifting into a code review you did not request.</div>
+        </div>
+
+        <h3>Pattern 2 — Generating boilerplate</h3>
+        <div class="prompt good">
+            <div class="prompt-head"><span class="label">Scaffold</span></div>
+            <div class="prompt-body">Generate the starting file for a new React component following
+                the conventions in the example file below.
+
+                Component name: OrderSummary
+                Props: orders (array of { id, total, status }), onCancel (function)
+                Behaviour: render each order; show a Cancel button only when status is "pending".
+
+                Match the example's import order, export style, prop handling and
+                file structure exactly. Same stack: React 18, plain CSS, useState only.
+
+                EXAMPLE FILE
+                [paste one existing component]</div>
+            <div class="outcome"><b>Why it works:</b> the example carries every convention you would otherwise have to describe and would probably describe incompletely.</div>
+        </div>
+
+        <h3>Pattern 3 — Writing tests</h3>
+        <div class="prompt good">
+            <div class="prompt-head"><span class="label">Test</span></div>
+            <div class="prompt-body">Write unit tests for the function below.
+
+                Before writing them, list the edge cases you intend to cover
+                and wait for me to confirm.
+
+                Constraints once confirmed:
+                - Plain Jest, no extra libraries
+                - One assertion per test where reasonable
+                - Test names describe behaviour, not implementation
+                - Cover empty input, single element, duplicates, and invalid input
+
+                [paste function]</div>
+            <div class="outcome"><b>Why it works:</b> the pause is the valuable part. The edge-case list is often more useful than the tests themselves, and reviewing it costs ten seconds while reviewing twenty generated tests costs ten minutes.</div>
+        </div>
+
+        <h3>Pattern 4 — Debugging</h3>
+        <div class="prompt good">
+            <div class="prompt-head"><span class="label">Debug</span></div>
+            <div class="prompt-body">A bug I cannot locate.
+
+                EXPECTED: the list filters as I type.
+                ACTUAL: the input accepts one character, then loses focus, and
+                the list does not filter.
+
+                EXACT ERROR (browser console):
+                [paste the full message and stack, unedited]
+
+                CODE (the whole component, unmodified):
+                [paste]
+
+                ALREADY TRIED:
+                - Confirmed the items prop arrives correctly (logged it)
+                - Removing the key prop changed nothing
+
+                Environment: React 18.2, Vite dev server, Chrome.
+
+                Give the most likely root cause first with your reasoning, then the fix.
+                If you need to see another file to be sure, say which one instead of guessing.</div>
+            <div class="outcome"><b>Why it works:</b> expected versus actual defines the target, the unedited error is the ground truth, "already tried" prevents the first two suggestions being things you have done, and the last line converts invention into a request.</div>
+        </div>
+
+        <h3>Pattern 5 — Refactoring</h3>
+        <div class="prompt good">
+            <div class="prompt-head"><span class="label">Refactor</span></div>
+            <div class="prompt-body">Refactor the function below for readability only.
+
+                RULES
+                - Behaviour must be identical. Same inputs, same outputs, same errors.
+                - Do not rename anything exported.
+                - Do not change the file structure or add dependencies.
+                - Do not add features, validation or error handling.
+
+                After the code, list each change you made and why, one line each,
+                so I can review them individually.
+
+                [paste function]</div>
+            <div class="outcome"><b>Why it works:</b> refactoring prompts fail by quietly changing behaviour. The rules block that, and the change list makes review a checklist rather than a diff hunt.</div>
+        </div>
+    </section>
+
+    <!-- ===================== CONTEXT ===================== -->
+    <section id="context">
+        <div class="eyebrow">Part 9 · Context</div>
+        <h2>Giving the right context</h2>
+        <p class="lead">The single highest-leverage skill in this session. Most disappointing output is not a model failure — it is a context failure.</p>
+
+        <p>The model knows only what is inside the context window. Every gap you leave is filled with something plausible and generic. Deciding what to include is the actual work.</p>
+
+        <h3>What counts as context</h3>
+        <ul class="kbdlist">
+            <li><span class="k">ERROR</span><span><strong>The exact error output, unedited.</strong> Full message, full stack trace, the line it points to. Paraphrasing an error — "it says something about undefined" — throws away the most information-dense text you have.</span></li>
+            <li><span class="k">DATA</span><span><strong>The real shape of your data.</strong> A sample API response, a props list, a record definition, a config object. This eliminates the most common cause of unusable code: correct logic written against field names that do not exist.</span></li>
+            <li><span class="k">CODE</span><span><strong>The surrounding code, not just the broken line.</strong> The whole function, the component it lives in, the caller. A bug is rarely on the line where it surfaces.</span></li>
+            <li><span class="k">CONV</span><span><strong>Your conventions.</strong> One existing file that does something similar communicates naming, structure, import order and style more completely than a paragraph describing them.</span></li>
+            <li><span class="k">VER</span><span><strong>Versions and environment.</strong> React 18, Java 17, Node 20, which build tool, which browser. Removes an entire class of confidently outdated answers.</span></li>
+            <li><span class="k">DIFF</span><span><strong>Expected versus actual.</strong> Both halves. "It does not work" describes a feeling; "expected X, got Y" describes a problem.</span></li>
+            <li><span class="k">TRIED</span><span><strong>What you already ruled out.</strong> Otherwise the first suggestions are the things you spent an hour eliminating.</span></li>
+            <li><span class="k">LIMIT</span><span><strong>Constraints you are working under.</strong> Cannot change the API, cannot add dependencies, must keep the existing signature, must work on old browsers.</span></li>
+        </ul>
+
+        <h3>Same bug, two prompts</h3>
+        <div class="prompt bad">
+            <div class="prompt-head"><span class="label">No context</span></div>
+            <div class="prompt-body">my react app crashes when the data loads, how do I fix it</div>
+            <div class="outcome"><b>Result:</b> a list of five generic possibilities, none specific to your code, and confident references to components and props that were never mentioned. You now have to test five guesses.</div>
+        </div>
+
+        <div class="prompt good">
+            <div class="prompt-head"><span class="label">With context</span></div>
+            <div class="prompt-body">EXPECTED: the product list renders once data arrives.
+                ACTUAL: white screen the moment the fetch resolves.
+
+                CONSOLE (exact):
+                Uncaught TypeError: Cannot read properties of undefined (reading 'map')
+                at ProductList (ProductList.jsx:14:23)
+
+                API RESPONSE (actual, from the Network tab):
+                { "status": "ok", "data": { "products": [ { "id": 1, "name": "Laptop Stand", "price": 1299 } ] } }
+
+                COMPONENT (unmodified, full file):
+                [paste]
+
+                ALREADY TRIED: confirmed the request returns 200 and the payload above.
+
+                Environment: React 18.2, Vite, fetch in a useEffect.
+
+                Identify the root cause, then give the minimal fix.
+                Do not restructure the component.</div>
+            <div class="outcome"><b>Result:</b> the mismatch between the response shape and what the component reads is immediately visible in the context provided. The answer is specific, correct, and checkable in seconds.</div>
+        </div>
+
+        <h3>Precision beats volume</h3>
+        <p>Pasting more is not the same as pasting better. Three relevant files beat thirty. Signs you have pasted too much: the answer addresses code you did not ask about, earlier constraints stop being honoured, or the response becomes vague and hedged. Signs you have pasted too little: the answer references things you never mentioned, or opens with a list of assumptions.</p>
+
+        <div class="callout stop">
+            <p><strong>Before pasting anything, check what is in it.</strong> API keys, connection strings, tokens, customer records, internal URLs, proprietary business logic. Context is the most valuable thing you give a model and the most dangerous. This is covered in full under non-negotiables.</p>
+        </div>
+    </section>
+
+    <!-- ===================== ANTI PATTERNS ===================== -->
+    <section id="antipatterns">
+        <div class="eyebrow">Part 10 · Diagnosis</div>
+        <h2>Anti-patterns</h2>
+        <p class="lead">Six prompts that fail. The flaw in each is named after the prompt — worth attempting the diagnosis before opening it.</p>
+
+        <details class="reveal">
+            <summary>1 &nbsp;·&nbsp; "make my code better"</summary>
+            <div class="ans"><strong>Vague ask.</strong> "Better" is undefined — faster, shorter, more readable, more testable, safer? The model picks one at random, usually by rewriting everything. Fix: name the single dimension and the boundary. "Reduce this function to under 30 lines without changing behaviour."</div>
+        </details>
+
+        <details class="reveal">
+            <summary>2 &nbsp;·&nbsp; "write a react component for a product page and also set up routing and add authentication and write the tests and explain everything"</summary>
+            <div class="ans"><strong>Overloaded prompt.</strong> Five tasks in one request. Quality drops across all of them, the response is too large to review honestly, and correcting one part forces a regeneration of the rest. Fix: one task per prompt, in sequence, reviewing each before the next.</div>
+        </details>
+
+        <details class="reveal">
+            <summary>3 &nbsp;·&nbsp; "why isn't my useEffect working"</summary>
+            <div class="ans"><strong>Missing context.</strong> No code, no error, no expected-versus-actual. The model answers about useEffect in general, which you could have read in the docs. Fix: the component, the exact console output, what you expected, what happened, what you already tried.</div>
+        </details>
+
+        <details class="reveal">
+            <summary>4 &nbsp;·&nbsp; "fix the bug in the checkout function"</summary>
+            <div class="ans"><strong>Assumed context.</strong> Referring to code the model has never seen. It will not say "I cannot see that file" — it will invent a checkout function and fix a bug in the invention. Fix: paste it. Every time. Assume nothing carries over, including from earlier in the same chat once it grows long.</div>
+        </details>
+
+        <details class="reveal">
+            <summary>5 &nbsp;·&nbsp; "write a function to sort products by price"</summary>
+            <div class="ans"><strong>Missing constraints.</strong> Ascending or descending? Mutate or return a copy? What about equal prices, missing prices, string prices? The model chooses, and it commonly chooses in-place <code class="inl">.sort()</code>, which mutates your input. Fix: state the direction, the immutability requirement, and the edge cases before asking.</div>
+        </details>
+
+        <details class="reveal">
+            <summary>6 &nbsp;·&nbsp; "what's the fastest way to deep clone an object in javascript in 2026"</summary>
+            <div class="ans"><strong>Wrong tool for the job.</strong> This is a current-facts-and-measurement question. The model's knowledge has a cutoff, performance depends on your data and runtime, and "fastest" cannot be answered without measuring. It will still answer confidently. Fix: use it to generate the benchmark, then run the benchmark.</div>
+        </details>
+
+        <h3>The pattern behind the patterns</h3>
+        <p>Every one of these is a version of the same mistake: <strong>assuming the model knows something it does not.</strong> Your intent, your codebase, your definition of better, your constraints, or the current state of the world. It never says "I do not have that." It produces something plausible in the shape of the gap.</p>
+    </section>
+
+    <!-- ===================== WORKSHEET ===================== -->
+    <section id="worksheet">
+        <div class="eyebrow">Part 11 · Exercise</div>
+        <h2>Rewrite worksheet</h2>
+        <p class="lead">Five failing prompts. For each: name the flaw, rewrite it, and write one sentence on why the rewrite is better. No AI tool required — the rewriting is the skill being practised.</p>
+
+        <div class="grid g2">
+            <div class="card">
+                <span class="num">01</span>
+                <h4>"add error handling to my api call"</h4>
+                <p style="font-size:14.5px">Which call? What should happen on failure — retry, message, fallback, log? What does the rest of the codebase do?</p>
+            </div>
+            <div class="card">
+                <span class="num">02</span>
+                <h4>"convert this to java"</h4>
+                <p style="font-size:14.5px">Which Java version? Preserve structure or idiomatic rewrite? What about the JavaScript-specific behaviour that has no direct equivalent?</p>
+            </div>
+            <div class="card">
+                <span class="num">03</span>
+                <h4>"my form doesn't submit"</h4>
+                <p style="font-size:14.5px">Expected versus actual. Any console output. The form code. Already ruled out.</p>
+            </div>
+            <div class="card">
+                <span class="num">04</span>
+                <h4>"write tests for this and also fix any bugs you find and improve the naming"</h4>
+                <p style="font-size:14.5px">Three tasks. Which one first, and how do you review the result of all three at once?</p>
+            </div>
+            <div class="card">
+                <span class="num">05</span>
+                <h4>"is my code secure?"</h4>
+                <p style="font-size:14.5px">Secure against what? Which code? What is the threat you are worried about, and is this a question a model can answer definitively at all?</p>
+            </div>
+        </div>
+
+        <h3>Marking your own rewrite</h3>
+        <p>A rewrite is good when it satisfies all of these:</p>
+        <ul>
+            <li>Someone unfamiliar with your project could act on it without asking a question.</li>
+            <li>It asks for exactly one thing.</li>
+            <li>Every piece of information the answer depends on is present in the prompt.</li>
+            <li>The output shape is specified.</li>
+            <li>You can tell, by reading the result, whether it followed the instructions.</li>
+        </ul>
+        <p>The last one matters most. A prompt so vague that any output looks acceptable has not been improved — it has only been lengthened.</p>
+    </section>
+
+    <!-- ===================== CLOSE ===================== -->
+    <section id="close">
+        <div class="eyebrow">Part 12 · Close</div>
+        <h2>Non-negotiables</h2>
+        <p class="lead">Five rules. These do not change with tool, model, seniority or deadline.</p>
+
+        <div class="grid g2">
+            <div class="card">
+                <span class="num">01</span>
+                <h4>Never ship code you have not read and understood</h4>
+                <p>If you cannot explain each line, you cannot maintain it, review it, or debug it at 2am. The code carries your name in the commit history regardless of who wrote it.</p>
+            </div>
+            <div class="card">
+                <span class="num">02</span>
+                <h4>Never paste secrets, credentials or customer data</h4>
+                <p>API keys, connection strings, tokens, real customer records, internal system details, proprietary business logic. Once it leaves your machine you do not control it. Replace with realistic dummy values before pasting.</p>
+            </div>
+            <div class="card">
+                <span class="num">03</span>
+                <h4>Always run and test what it writes</h4>
+                <p>Reading is not verification. Code that looks correct and code that is correct are different things, and the gap is exactly where subtle bugs live.</p>
+            </div>
+            <div class="card">
+                <span class="num">04</span>
+                <h4>Verify every API, method and factual claim</h4>
+                <p>Especially the ones that solve your problem most conveniently. Confident tone is not evidence. Check the real documentation.</p>
+            </div>
+            <div class="card">
+                <span class="num">05</span>
+                <h4>Do not outsource the fundamentals</h4>
+                <p>Using AI on something you could not do yourself feels productive and leaves you exactly where you were. Interviews, incidents and design discussions all test the floor, not the ceiling.</p>
+            </div>
+            <div class="card" style="background:var(--ink);color:#fff;border-color:var(--ink)">
+                <span class="tag" style="color:#8E9AB2">Where an employer is involved</span>
+                <h4 style="color:#fff">Follow your organisation's AI policy</h4>
+                <p style="color:#C3CBD9">Many companies restrict which tools may be used and what may be entered into them. These rules are the floor. Your workplace policy sits on top and always wins.</p>
+            </div>
+        </div>
+
+        <h3>Session 2 · AI-Assisted Development</h3>
+        <p>The next session moves from a chat box to tools that read your files, run commands and make multi-step changes: the AI coding tool landscape, Claude Code, what an agent actually is and when it helps or hurts, reviewing generated diffs line by line, and finding deliberately planted flaws in AI-written code.</p>
+        <p>Everything today carries forward. The role–context–task–format structure becomes the specification an agent works from, and reliable-versus-risky becomes the judgement about what to let an agent attempt at all.</p>
+
+        <div class="callout">
+            <p><strong>Between now and then:</strong> re-run the prompts on this page in whichever tool you have access to. The refinement ladder is the one worth doing carefully — running rounds 1 through 6 yourself, in order, is the fastest way to internalise what each element actually contributes.</p>
+        </div>
+
+        <div class="footer">
+            GenAI Foundations &amp; Prompt Engineering for Developers · Session 1 of 2 · MERN and Java cohorts
+        </div>
+    </section>
+
+</div>
+
+<script>
+    (function(){
+        var links = Array.prototype.slice.call(document.querySelectorAll('#toc a'));
+        var map = {};
+        links.forEach(function(a){
+            var el = document.querySelector(a.getAttribute('href'));
+            if (el) map[a.getAttribute('href').slice(1)] = a;
+        });
+        var obs = new IntersectionObserver(function(entries){
+            entries.forEach(function(e){
+                if (e.isIntersecting) {
+                    links.forEach(function(l){ l.classList.remove('on'); });
+                    var a = map[e.target.id];
+                    if (a) {
+                        a.classList.add('on');
+                        a.scrollIntoView({block:'nearest', inline:'nearest'});
+                    }
+                }
+            });
+        }, { rootMargin: '-70px 0px -75% 0px', threshold: 0 });
+        Object.keys(map).forEach(function(id){
+            var el = document.getElementById(id);
+            if (el) obs.observe(el);
+        });
+    })();
+</script>
+</body>
+</html>
