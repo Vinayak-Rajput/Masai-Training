@@ -1,0 +1,71 @@
+package com.hdfclife.queue;
+
+import com.hdfclife.exception.QueueEmptyException;
+import com.hdfclife.exception.QueueFullException;
+
+public class CircularClaimQueue {
+
+    private int[] queue;
+
+    private int front;
+    private int rear;
+
+    private int size;
+
+    public CircularClaimQueue(int capacity) {
+        queue = new int[capacity];
+        front = 0;
+        rear = -1;
+        size = 0;
+    }
+
+    // Time Complexity: O(1); Space Complexity: O(1)
+    public void enqueue(int value) {
+
+        if(isFull()) {
+            throw new QueueFullException("Queue is Full.");
+        }
+
+        rear = (rear + 1) % queue.length;
+        queue[rear] = value;
+        size++;
+    }
+
+    // Time Complexity: O(1); Space Complexity: O(1)
+    public int dequeue(){
+
+        if(isEmpty()) {
+            throw new QueueEmptyException("Queue is Empty.");
+        }
+
+        int removedValue = queue[front];
+        front = (front + 1) % queue.length;
+        size--;
+
+        return removedValue;
+    }
+
+    public boolean isEmpty() {
+        return size == 0;
+    }
+
+    public boolean isFull() {
+        return size == queue.length;
+    }
+
+    public void display() {
+
+        if (isEmpty()) {
+            System.out.println("Queue is Empty");
+            return;
+        }
+
+        for (int i = 0; i < size; i++) {
+            int index = (front + i) % queue.length;
+            System.out.print(queue[index]);
+            if(i != size - 1) System.out.print(", ");
+        }
+
+        System.out.println();
+    }
+}
