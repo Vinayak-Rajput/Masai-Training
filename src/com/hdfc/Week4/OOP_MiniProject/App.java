@@ -1,4 +1,4 @@
-package com.hdfc;
+package com.hdfc.Week4.OOP_MiniProject;
 
 import com.hdfc.Week4.Smart_ECommerce_Order_Management_System.factory.ProductFactory;
 import com.hdfc.Week4.Smart_ECommerce_Order_Management_System.model.Product;

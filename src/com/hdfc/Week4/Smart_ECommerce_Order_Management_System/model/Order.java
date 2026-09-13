@@ -18,7 +18,7 @@ public class Order {
     private List<OrderItem> items;
 
     // Private Constructor
-    private Order(OrderBuilder builder) {
+    public Order(OrderBuilder builder) {
 
         this.orderId = builder.orderId;
         this.customer = builder.customer;

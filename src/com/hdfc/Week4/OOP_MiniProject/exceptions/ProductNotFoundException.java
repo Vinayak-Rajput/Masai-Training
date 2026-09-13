@@ -1,4 +1,4 @@
-package com.hdfc.exceptions;
+package com.hdfc.Week4.OOP_MiniProject.exceptions;
 
 public class ProductNotFoundException extends RuntimeException{
 

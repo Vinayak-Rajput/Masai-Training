@@ -1,6 +1,6 @@
-package com.hdfc.factory;
+package com.hdfc.Week4.OOP_MiniProject.factory;
 
-import com.hdfc.exceptions.ProductNotFoundException;
+import com.hdfc.Week4.OOP_MiniProject.exceptions.ProductNotFoundException;
 import com.hdfc.Week4.Smart_ECommerce_Order_Management_System.model.BookProduct;
 import com.hdfc.Week4.Smart_ECommerce_Order_Management_System.model.ElectronicsProduct;
 import com.hdfc.Week4.Smart_ECommerce_Order_Management_System.model.GroceryProduct;

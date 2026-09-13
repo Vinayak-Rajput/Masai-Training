@@ -1,4 +1,4 @@
-package com.hdfc.strategy;
+package com.hdfc.Week4.OOP_MiniProject.strategy;
 
 public class FestivalDiscountStrategy implements DiscountStrategy {
 

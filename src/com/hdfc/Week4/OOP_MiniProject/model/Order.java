@@ -1,4 +1,4 @@
-package com.hdfc.model;
+package com.hdfc.Week4.OOP_MiniProject.model;
 
 import com.hdfc.Week4.Smart_ECommerce_Order_Management_System.strategy.DiscountStrategy;
 
@@ -94,10 +94,6 @@ public class Order {
         public OrderBuilder addStrategy(DiscountStrategy discountStrategy){
             this.discountStrategy = discountStrategy;
             return this;
-        }
-
-        public com.hdfc.Week4.Smart_ECommerce_Order_Management_System.model.Order build(){
-            return new com.hdfc.Week4.Smart_ECommerce_Order_Management_System.model.Order(this);
         }
 
 

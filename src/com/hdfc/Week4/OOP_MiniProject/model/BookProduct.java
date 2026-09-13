@@ -1,4 +1,4 @@
-package com.hdfc.model;
+package com.hdfc.Week4.OOP_MiniProject.model;
 
 public class BookProduct extends Product {
 
