@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id = "emp1" class="com.hdfc.beans.Employee"/>
+
+    <bean id = "emailService" class="com.hdfc.service.EmailService" />
+
+    <bean id = "smsService" class="com.hdfc.service.SmsService" />
+
+    <bean id = "userService" class="com.hdfc.service.UserService">
+
+<!--        <property name="notificationService" ref="emailService"/>-->
+        <constructor-arg name = "notificationService" ref = "emailService" />
+
+    </bean>
+
+
+</beans>
