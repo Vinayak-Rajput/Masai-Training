@@ -1,7 +1,7 @@
-package com.hdfc;
+package com.hdfc.Week4.Smart_ECommerce_Order_Management_System;
 
-import com.hdfc.factory.ProductFactory;
-import com.hdfc.model.*;
+import com.hdfc.Week4.Smart_ECommerce_Order_Management_System.factory.ProductFactory;
+import com.hdfc.Week4.Smart_ECommerce_Order_Management_System.model.Product;
 
 import java.util.Comparator;
 import java.util.List;

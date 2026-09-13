@@ -1,9 +1,9 @@
-package com.hdfc.factory;
+package com.hdfc.Week4.Smart_ECommerce_Order_Management_System.factory;
 
-import com.hdfc.model.BookProduct;
-import com.hdfc.model.ElectronicsProduct;
-import com.hdfc.model.GroceryProduct;
-import com.hdfc.model.Product;
+import com.hdfc.Week4.Smart_ECommerce_Order_Management_System.model.BookProduct;
+import com.hdfc.Week4.Smart_ECommerce_Order_Management_System.model.ElectronicsProduct;
+import com.hdfc.Week4.Smart_ECommerce_Order_Management_System.model.GroceryProduct;
+import com.hdfc.Week4.Smart_ECommerce_Order_Management_System.model.Product;
 
 public class ProductFactory {
 

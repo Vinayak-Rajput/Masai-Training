@@ -1,10 +1,9 @@
 package com.hdfc.model;
 
-import com.hdfc.strategy.DiscountStrategy;
+import com.hdfc.Week4.Smart_ECommerce_Order_Management_System.strategy.DiscountStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Order {
 
@@ -97,8 +96,8 @@ public class Order {
             return this;
         }
 
-        public Order build(){
-            return new Order(this);
+        public com.hdfc.Week4.Smart_ECommerce_Order_Management_System.model.Order build(){
+            return new com.hdfc.Week4.Smart_ECommerce_Order_Management_System.model.Order(this);
         }
 
 

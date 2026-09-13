@@ -1,6 +1,6 @@
-package com.hdfc.model;
+package com.hdfc.Week4.Smart_ECommerce_Order_Management_System.model;
 
-import com.hdfc.strategy.DiscountStrategy;
+import com.hdfc.Week4.Smart_ECommerce_Order_Management_System.strategy.DiscountStrategy;
 
 import java.util.ArrayList;
 import java.util.List;

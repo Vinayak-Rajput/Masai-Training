@@ -1,4 +1,4 @@
-package com.hdfc.model;
+package com.hdfc.Week4.Smart_ECommerce_Order_Management_System.model;
 
 public abstract class Product {
 

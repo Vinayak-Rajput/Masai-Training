@@ -1,8 +1,7 @@
 package com.hdfc;
 
-import com.hdfc.factory.ProductFactory;
-import com.hdfc.model.OrderItem;
-import com.hdfc.model.Product;
+import com.hdfc.Week4.Smart_ECommerce_Order_Management_System.factory.ProductFactory;
+import com.hdfc.Week4.Smart_ECommerce_Order_Management_System.model.Product;
 
 import java.util.Arrays;
 import java.util.List;

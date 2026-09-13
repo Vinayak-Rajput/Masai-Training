@@ -1,6 +1,6 @@
-package com.hdfc;
+package com.hdfc.Week4.Smart_ECommerce_Order_Management_System;
 
-import com.hdfc.model.Order;
+import com.hdfc.Week4.Smart_ECommerce_Order_Management_System.model.Order;
 
 import java.util.List;
 
