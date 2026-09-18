@@ -23,14 +23,6 @@ The usual learning path is:
 Week(n) -> day(n) -> assignment or example
 ```
 
-Some larger exercises are self-contained project directories with their own README:
-
-| Project | Description |
-| --- | --- |
-| [HDFC Life Policy System](src/com/hdfc/Week4/hdfc-life-policy-system/README.md) | Policy creation, premium calculation, claim processing, and notifications |
-| [HDFC Life Claim Algorithms](src/com/hdfc/Week5/hdfc-life-claim-algorithms/README.md) | Array storage and common searching, partitioning, and sliding-window algorithms |
-| [HDFC Life Claim Pipeline](src/com/hdfc/Week6/hdfc-life-claim-pipeline/README.md) | Linked lists, stacks, queues, graph traversal, and concurrent claim processing |
-
 ## Working with the examples
 
 The repository contains independent Java examples rather than one single build. Open the required source directory in an IDE, or compile a selected package with a JDK installed locally. Most examples expose their demonstration logic from a `main` method; the self-contained project READMEs document their source layout and expected behavior.
